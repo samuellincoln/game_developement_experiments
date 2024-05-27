@@ -52,7 +52,7 @@ PF = PATHFOLDER
 LEVELS = lambda : [PATHFOLDER () + "map1.txt", PATHFOLDER () + "map2.txt"]
 MAPLIST = lambda file : [[c for c in str (l) if c != "\n"] for l in file if l != "\n"]
 
-MAP = lambda levelcounter : MAPLIST (open (LEVELS () [levelcounter], "r"))
+MAP = lambda levelcounter : MAPLIST (open (LEVELS () [levelcounter], "r")) #if levelcounter < len (LEVELS ()) else print ("END OF GAME!!")
 
 INITIALPOSITION = lambda : [RADIUS (), len (MAP (levelcounter)) * AMOUNT () - RADIUS ()]
 
@@ -142,15 +142,18 @@ game_on = True
 mode_set = False
 
 character = Character (INITIALPOSITION (), KEYS (), keyboard, AMOUNT (), MAP (levelcounter))
-while game_on: #Aqui eh a logica de colocar o jogo para rodar... Vamos entao rodar o nosso jogo agora?!
-    if character.completed_level() :
+while game_on and levelcounter < len (LEVELS ()): #Aqui eh a logica de colocar o jogo para rodar... Vamos entao rodar o nosso jogo agora?!
+    length = len (LEVELS ())
+    if character.completed_level() and levelcounter < len (LEVELS ()) - 1:
         levelcounter = levelcounter + 1
         currentmap = MAP (levelcounter)
         character = Character (INITIALPOSITION (), KEYS (), keyboard, AMOUNT (), currentmap)
         if (not valid_map (currentmap)) :
             print ("INVALID MAP!!")
         mode_set = False
-    if not mode_set :
+    elif character.completed_level():
+        game_on = False
+    if not mode_set  and levelcounter < len (LEVELS ()):
         game_surface = pygame.display.set_mode(DIMENSIONS (MAP (levelcounter)))
         mode_set = True
     colour = BLUE ()
